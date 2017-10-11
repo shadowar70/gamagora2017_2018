@@ -1,0 +1,5 @@
+﻿  test.cpp
+c:\users\jothenin\source\repos\projetrealtime\projetrealtime\test.cpp(56): warning C4244: 'argument' : conversion de 'double' en 'const unsigned int', perte possible de données
+c:\users\jothenin\source\repos\projetrealtime\projetrealtime\test.cpp(109): warning C4305: 'argument' : troncation de 'double' à 'GLfloat'
+  ProjetRealTime.vcxproj -> C:\Users\jothenin\source\repos\ProjetRealTime\Debug\ProjetRealTime.exe
+  ProjetRealTime.vcxproj -> C:\Users\jothenin\source\repos\ProjetRealTime\Debug\ProjetRealTime.pdb (Partial PDB)
