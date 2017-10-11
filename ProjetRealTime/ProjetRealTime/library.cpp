@@ -51,7 +51,7 @@ GLFWwindow* openContext()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+	window = glfwCreateWindow(640, 480, "Nanananananananana BATMAN ", NULL, NULL);
 	if (!window)
 	{
 		std::cerr << "Could not init window" << std::endl;

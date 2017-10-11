@@ -22,6 +22,8 @@ struct
 {
 	GLuint program; // a shader
 	GLuint tex; // a texture
+	GLuint renderedTexture;
+	GLuint fBuff;
 	GLuint vao; // a vertex array object
 	size_t nTris;
 } gs;
@@ -47,6 +49,16 @@ void init()
 	glGenBuffers(1, &buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
+	//Build FrameBuffer
+	glGenFramebuffers(1, &gs.fBuff);
+	//glBindFramebuffer(GL_FRAMEBUFFER, fBuff);
+
+	
+	glGenTextures(1, &gs.renderedTexture);
+	glBindTexture(GL_TEXTURE_2D, gs.renderedTexture);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8, 200, 200);
+
+	//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 200, 200, GL_RGB, GL_FLOAT, nullptr);
 
 	//Build texture
 	glGenTextures(1, &gs.tex);
@@ -98,12 +110,6 @@ void init()
 
 void render(const int width, const int height)
 {
-	glViewport(0, 0, width, height);
-
-	glClear(GL_COLOR_BUFFER_BIT);
-	glClear(GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
-
 	glUseProgram(gs.program);
 	double time = glfwGetTime();
 	glProgramUniform3f(gs.program, 0, 0.5, 0.5, 0.7);
@@ -123,10 +129,32 @@ void render(const int width, const int height)
 		glProgramUniform2f(gs.program, 1, 1/scale, 1);
 	}
 
-	glBindVertexArray(gs.vao);
+	//Off screen rendering
+	glBindFramebuffer(GL_FRAMEBUFFER, gs.fBuff);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gs.renderedTexture, 0);
+	glViewport(0, 0, 500, 500);
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
 
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, gs.tex);
+
+	glBindVertexArray(gs.vao);
+	glDrawArrays(GL_TRIANGLES, 0, gs.nTris * 3);
+	//Screen rendering
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, width, height);
+	glClearColor(1, 1, 1, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	glBindVertexArray(gs.vao);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, gs.renderedTexture);
 
 	glDrawArrays(GL_TRIANGLES, 0, gs.nTris * 3);
 

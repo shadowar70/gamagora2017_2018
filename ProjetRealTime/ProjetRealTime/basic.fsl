@@ -16,6 +16,7 @@ void main()
 		color_temp.y = 0.2*(color_temp.y/5);
 	}
 	
-	color_out = texture(tex, fract(abs(pos.xy)))*(color_temp.yyyy*(color_temp.y));
+	color_out = texture(tex, fract(abs(pos.xy)));
+	//color_out = texture(tex, fract(abs(pos.xy)))*(color_temp.yyyy*(color_temp.y));
 	
 }
