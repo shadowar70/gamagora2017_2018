@@ -27,7 +27,6 @@ public class Player : MovingObject {
 	protected override void Start () {
 		animator = GetComponent<Animator> ();
 		food = GameManager.instance.playerFoodPoints;
-        Debug.Log("START -- ADAM :" + food);
         foodText = GameObject.Find("FoodText").GetComponent<Text>();
         foodText.text = "Adam: " + food;
 		base.Start ();
@@ -79,7 +78,6 @@ public class Player : MovingObject {
 
 	private void OnTriggerEnter2D(Collider2D other){
 		if (other.tag == "Exit") {
-            Debug.Log("EXIT -- ADAM :" + food);
             GameManager.instance.playerFoodPoints = food;
             Invoke ("Restart", restartLevelDelay);
 			enabled = false;

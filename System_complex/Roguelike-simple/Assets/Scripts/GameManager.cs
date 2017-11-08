@@ -61,16 +61,12 @@ public class GameManager : MonoBehaviour {
 	//This is called each time a scene is loaded.
 	static private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
 	{
-        Debug.Log("c menu" + arg0.name);
         if (arg0.name == "Menu") {
             instance.level = 0;
-            Debug.Log("OUIIIII");
         }
         else {
-            Debug.Log("Level:"+ instance.level);
             instance.level++;
             instance.InitGame();
-            Debug.Log("Level:" + instance.level);
         }
         GameManager.instance.enabled = true;
     }
