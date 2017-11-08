@@ -68,4 +68,33 @@ public class Enemy : MovingObject {
 	}
 
 
+    public bool AStar(List<Node> nodePosition, Node playerPosition, Node startPosition) {
+        List<Node> closedList = new List<Node>();
+        List<Node> openList = new List<Node>() { startPosition };
+        Node currentNode;
+        currentNode = openList[0];
+        while (openList.Count != 0) {
+
+            if (currentNode.ComparePosNode(playerPosition)) {
+                return true;
+            }
+
+            foreach(Node n in openList) {
+                if (currentNode.totalCost >= n.totalCost) {
+                    currentNode = n;
+                }
+                
+
+
+
+
+            }
+
+
+        }
+
+        //C LE DRAME, IL A RIEN TROUVE
+
+    }
+
 }

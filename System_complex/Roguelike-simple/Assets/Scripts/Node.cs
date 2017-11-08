@@ -16,6 +16,32 @@ public class Node {
         cost = c;
     }
 
+    //Ceci est le FCOST
+    public float totalCost {
+        get { return cost + heuristique; }
+    }
+
+    public int CompareCostNode(Node n2) {
+
+        if (heuristique > n2.heuristique) {
+            return 1;
+        }
+        if (heuristique == n2.heuristique) {
+            return 0;
+        }
+
+        return -1;
+    }
+
+    public bool ComparePosNode(Node n2) {
+
+        if (position.x == n2.position.x && position.y == n2.position.y) {
+            return true;
+        }
+
+        return false;
+    }
+
     // Use this for initialization
     void Start() {
 
