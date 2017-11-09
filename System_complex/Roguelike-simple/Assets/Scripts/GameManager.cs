@@ -121,8 +121,9 @@ public class GameManager : MonoBehaviour {
 		}
 
 		for (int i = 0; i < enemies.Count; i++) {
-			enemies [i].MoveEnemy ();
-			yield return new WaitForSeconds (enemies [i].moveTime);
+            //enemies [i].MoveEnemy ();
+            enemies[i].AStarMoveEnemy(boardScript.nodePosition);
+            yield return new WaitForSeconds (enemies [i].moveTime);
 		}
 
 		playersTurn = true;

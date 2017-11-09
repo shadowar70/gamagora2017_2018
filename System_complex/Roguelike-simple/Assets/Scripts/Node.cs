@@ -7,8 +7,8 @@ public class Node {
 
     public Vector3 position;
     public bool walkable;
-    public int heuristique; //Distance case->cible
-    public int cost; //Cout du "terrain"
+    public int heuristique; //Distance case->cible 
+    public int cost; //Cout du "terrain" (gScore/gcost)
 
     public Node(Vector3 pos, bool w, int c) {
         position = pos;
@@ -16,7 +16,7 @@ public class Node {
         cost = c;
     }
 
-    //Ceci est le FCOST
+    //Ceci est le FCOST/Fscore
     public float totalCost {
         get { return cost + heuristique; }
     }
@@ -40,6 +40,12 @@ public class Node {
         }
 
         return false;
+    }
+
+    public void SetPosition(int xNew, int yNew, int zNew) {
+        position.x = xNew;
+        position.y = yNew;
+        position.z = zNew;
     }
 
     // Use this for initialization

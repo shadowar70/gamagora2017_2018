@@ -38,7 +38,7 @@ public class BoardManager : MonoBehaviour {
 			for (int x = 1; x < columns - 1; x++) {
 				for (int y = 1; y < rows - 1; y++) {
 					gridPositions.Add (new Vector3 (x, y, 0f));
-                    nodePosition.Add (new Node(new Vector3(x, y, 0f), true, 1));
+                    nodePosition.Add (new Node(new Vector3(x, y, 0f), true, 100000));
                 }
 			}
 		}
@@ -78,7 +78,6 @@ public class BoardManager : MonoBehaviour {
 
                     if (nodePosition[j].position.Equals(randomPosition)) {
                         nodePosition[j].walkable = false;
-                        Debug.Log("node mur: " + nodePosition[j].position);
                     }
 
                 }
