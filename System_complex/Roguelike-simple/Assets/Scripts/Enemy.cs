@@ -54,10 +54,12 @@ public class Enemy : MovingObject {
             //Enemy Position
             if (nodePosition[i].position.Equals(gameObject.transform.position)) {
                 enemyNode = nodePosition[i];
+                Debug.Log(" ENEMY!");
             }
 
             if (nodePosition[i].position.Equals(GameObject.FindGameObjectWithTag("Player").transform.position)) {
                 playerNode = nodePosition[i];
+                Debug.Log(" PLAYER!");
             }
         }
         Debug.Log(" T DEDANS ?");
@@ -91,17 +93,19 @@ public class Enemy : MovingObject {
         posTop = new Vector3(positionNeighbor.x, positionNeighbor.y+1, positionNeighbor.z);
         posDown = new Vector3(positionNeighbor.x, positionNeighbor.y - 1, positionNeighbor.z);
         for (int i = 0; i < nodePosition.Count; i++) {
-            if (nodePosition[i].position.Equals(posRight)) {
-                neighbor.Add(nodePosition[i]);
-            }
-            if (nodePosition[i].position.Equals(posLeft)) {
-                neighbor.Add(nodePosition[i]);
-            }
-            if (nodePosition[i].position.Equals(posTop)) {
-                neighbor.Add(nodePosition[i]);
-            }
-            if (nodePosition[i].position.Equals(posDown)) {
-                neighbor.Add(nodePosition[i]);
+            if (nodePosition[i].walkable) {
+                if (nodePosition[i].position.Equals(posRight)) {
+                    neighbor.Add(nodePosition[i]);
+                }
+                if (nodePosition[i].position.Equals(posLeft)) {
+                    neighbor.Add(nodePosition[i]);
+                }
+                if (nodePosition[i].position.Equals(posTop)) {
+                    neighbor.Add(nodePosition[i]);
+                }
+                if (nodePosition[i].position.Equals(posDown)) {
+                    neighbor.Add(nodePosition[i]);
+                }
             }
 
         }
@@ -123,6 +127,7 @@ public class Enemy : MovingObject {
 
 
     public Node AStar(List<Node> nodePosition, Node playerPosition, Node startPosition) {
+        Debug.Log("Cible: "+ playerPosition.position+ " Depart: "+ startPosition.position);
         List<Node> closedList = new List<Node>();
         startPosition.cost = 0;
         startPosition.heuristique = DistanceBetween(playerPosition, startPosition);
@@ -132,15 +137,14 @@ public class Enemy : MovingObject {
         int tentative_cost = 0; //(Tentative_gScore)
         Node currentNode;
         currentNode = openList[0];
-        Debug.Log(" T'es ou ?");
         while (openList.Count != 0) {
-            Debug.Log(" NOPE");
+
             //Target is find
             if (currentNode.ComparePosNode(playerPosition)) {
                 //return reconstruct_path(cameFromList, currentNode);
                 cameFromList.Add(currentNode);
                 Debug.Log("Chemin Disponible! ");
-                for (int i = 0; i < openList.Count; i++) {
+                for (int i = 0; i < cameFromList.Count; i++) {
                     Debug.Log(cameFromList[i].position);
                 }
                 Debug.Log("FIN Chemin ! ");
@@ -148,39 +152,40 @@ public class Enemy : MovingObject {
             }
 
             for(int i=0; i < openList.Count; i++) {
-                Debug.Log("YOLO");
+
+                //Si on a un voisin avec un cout inferieur ou egal
                 if (currentNode.totalCost >= openList[i].totalCost) {
                     currentNode = openList[i];
                 }
 
                 openList.Remove(currentNode);
                 closedList.Add(currentNode);
-                Debug.Log("Change");
-
-
                 neighborList = GetNeighbor(nodePosition, currentNode);
-                Debug.Log(" NEIGHBOR");
+
+                //Traitement des voisin de la node current
                 foreach (Node currentNeighbor in neighborList) {
+                    //Si on a pas deja traite cette node
                     if (!closedList.Contains(currentNeighbor)) {
 
                         if (!openList.Contains(currentNeighbor)) {
                             openList.Add(currentNeighbor);
-                            Debug.Log(" NEW VOISIN");
+                            Debug.Log(" NEW VOISIN: "+ currentNeighbor.position);
                         }
 
                         tentative_cost = currentNode.cost + DistanceBetween(currentNode, currentNeighbor);
-                        Debug.Log(" NEW COST" + (tentative_cost < currentNeighbor.cost) + " tentative cost:" + tentative_cost +" neighbor cost:"+ currentNeighbor.cost);
+                        Debug.Log(" NEW COST is " + (tentative_cost < currentNeighbor.cost) + ". tentative cost: " + tentative_cost +" neighbor cost: "+ currentNeighbor.cost);
                         if (tentative_cost < currentNeighbor.cost) {
-                            Debug.Log("MEILLEUR NODE");
-                            cameFromList.Add(currentNode);
-                            Debug.Log("CHEMIN PLUS GRAND");
+                          
+                            if (!cameFromList.Contains(currentNode)) {
+                                cameFromList.Add(currentNode);
+                                Debug.Log("CHEMIN PLUS GRAND");
+                            }
+                            
                             for (int j = 0; j < nodePosition.Count; j++) {
                                 if (nodePosition[j].Equals(currentNeighbor)) {
-                                    Debug.Log(" PAS LA !");
                                     nodePosition[j].cost = tentative_cost;
-                                    Debug.Log(" PAS ICI !");
                                     nodePosition[j].heuristique = DistanceBetween(currentNeighbor, playerPosition);
-                                    Debug.Log(" NON PLUS !");
+                                    Debug.Log("MAJ NODE GRID: "+ nodePosition[j].position +" cost: "+ nodePosition[j].cost + " heuristique: "+ nodePosition[j].heuristique);
                                 }
                             }
                         }

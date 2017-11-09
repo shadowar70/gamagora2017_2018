@@ -3,12 +3,15 @@
 layout(location=0) in vec3 position;
 layout(location=1) uniform vec2 scale;
 layout(location=2) uniform mat4 camera;
+layout(location=6) in vec3 vertexPosition_modelspace;
 out vec3 pos;
+uniform mat4 depthMVP;
 
 void main()
 {
    
-    gl_Position = camera*vec4(position, 1);
+    //gl_Position = camera*vec4(position, 1);
+	gl_Position = depthMVP*vec4(position, 1);
 	
     pos = position;
 }
