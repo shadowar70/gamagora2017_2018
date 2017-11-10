@@ -38,9 +38,11 @@ public class Player : MovingObject {
 
 	// Update is called once per frame
 	void Update () {
-		if(!GameManager.instance.playersTurn) return;
 
-		int horizontal = 0;
+        if (!GameManager.instance.playersTurn) return;
+        if (Input.GetButton("Jump")) return;
+
+        int horizontal = 0;
 		int vertical = 0;
 
 		horizontal = (int) (Input.GetAxisRaw ("Horizontal"));

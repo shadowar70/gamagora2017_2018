@@ -21,13 +21,13 @@ public class Enemy : MovingObject {
 	}
 
 	protected override void AttemptMove<T>(int xDir, int yDir){
-		if (skipMove) {
-			skipMove = false;
-			return;
-		}
+		//if (skipMove) {
+		//	skipMove = false;
+		//	return;
+		//}
 
 		base.AttemptMove<T> (xDir, yDir);
-		skipMove = true;
+		//skipMove = true;
 
 	}
 
@@ -45,7 +45,6 @@ public class Enemy : MovingObject {
 	}
 
     public void AStarMoveEnemy(List<Node> nodePositionStart) {
-        Debug.Log("COUCOU");
         int xDir = 0;
         int yDir = 0;
         Node directionEnemy, enemyNode = null, playerNode = null;
@@ -54,20 +53,18 @@ public class Enemy : MovingObject {
             //Enemy Position
             if (nodePosition[i].position.Equals(gameObject.transform.position)) {
                 enemyNode = nodePosition[i];
-                Debug.Log(" ENEMY!");
+                
             }
 
             if (nodePosition[i].position.Equals(GameObject.FindGameObjectWithTag("Player").transform.position)) {
                 playerNode = nodePosition[i];
-                Debug.Log(" PLAYER!");
             }
         }
-        Debug.Log(" T DEDANS ?");
+        
         if (enemyNode != null && playerNode != null) {
-            Debug.Log(" EH BAS NON !");
             directionEnemy = AStar(nodePosition, playerNode, enemyNode);
-            xDir = (int)directionEnemy.position.x;
-            yDir = (int)directionEnemy.position.y;
+            xDir = (int)(directionEnemy.position.x - enemyNode.position.x);
+            yDir = (int)(directionEnemy.position.y - enemyNode.position.y);
         }
 
         AttemptMove<Player>(xDir, yDir);
@@ -127,7 +124,8 @@ public class Enemy : MovingObject {
 
 
     public Node AStar(List<Node> nodePosition, Node playerPosition, Node startPosition) {
-        Debug.Log("Cible: "+ playerPosition.position+ " Depart: "+ startPosition.position);
+        //Debug.Log("Cible: "+ playerPosition.position+ " Depart: "+ startPosition.position);
+        bool isPresent = false;
         List<Node> closedList = new List<Node>();
         startPosition.cost = 0;
         startPosition.heuristique = DistanceBetween(playerPosition, startPosition);
@@ -145,7 +143,7 @@ public class Enemy : MovingObject {
                 cameFromList.Add(currentNode);
                 Debug.Log("Chemin Disponible! ");
                 for (int i = 0; i < cameFromList.Count; i++) {
-                    Debug.Log(cameFromList[i].position);
+                    Debug.Log("Pos: "+cameFromList[i].position +" Heuristique: "+ cameFromList[i].heuristique+ " Cost: " + cameFromList[i].cost);
                 }
                 Debug.Log("FIN Chemin ! ");
                 return cameFromList[1];
@@ -169,23 +167,33 @@ public class Enemy : MovingObject {
 
                         if (!openList.Contains(currentNeighbor)) {
                             openList.Add(currentNeighbor);
-                            Debug.Log(" NEW VOISIN: "+ currentNeighbor.position);
                         }
 
                         tentative_cost = currentNode.cost + DistanceBetween(currentNode, currentNeighbor);
-                        Debug.Log(" NEW COST is " + (tentative_cost < currentNeighbor.cost) + ". tentative cost: " + tentative_cost +" neighbor cost: "+ currentNeighbor.cost);
-                        if (tentative_cost < currentNeighbor.cost) {
+                        //Debug.Log(" NEW COST is " + (tentative_cost < currentNeighbor.cost) + ". tentative cost: " + tentative_cost +" neighbor cost: "+ currentNeighbor.cost);
+                        if (tentative_cost < currentNeighbor.totalCost) {
                           
+                            //On ajoute le noeud courant au chemin (si il n'y est pas déjà)
                             if (!cameFromList.Contains(currentNode)) {
-                                cameFromList.Add(currentNode);
-                                Debug.Log("CHEMIN PLUS GRAND");
+                                for (int j = 0; j < cameFromList.Count; j++) {
+                                    if (cameFromList[j].Equals(currentNeighbor)) {
+                                        isPresent = true;
+                                    }
+                                }
+                                if (!isPresent) {
+                                    cameFromList.Add(currentNode);
+                                }
+
+                                isPresent = false;
+
                             }
                             
+                            //Mise à jour de la grille de Node
                             for (int j = 0; j < nodePosition.Count; j++) {
                                 if (nodePosition[j].Equals(currentNeighbor)) {
                                     nodePosition[j].cost = tentative_cost;
                                     nodePosition[j].heuristique = DistanceBetween(currentNeighbor, playerPosition);
-                                    Debug.Log("MAJ NODE GRID: "+ nodePosition[j].position +" cost: "+ nodePosition[j].cost + " heuristique: "+ nodePosition[j].heuristique);
+                                    //Debug.Log("MAJ NODE GRID: "+ nodePosition[j].position +" cost: "+ nodePosition[j].cost + " heuristique: "+ nodePosition[j].heuristique);
                                 }
                             }
                         }

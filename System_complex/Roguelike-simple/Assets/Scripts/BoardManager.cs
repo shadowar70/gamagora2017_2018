@@ -78,6 +78,8 @@ public class BoardManager : MonoBehaviour {
 
                     if (nodePosition[j].position.Equals(randomPosition)) {
                         nodePosition[j].walkable = false;
+                        nodePosition[j].cost = 100000;
+                        nodePosition[j].heuristique = 100000;
                     }
 
                 }
