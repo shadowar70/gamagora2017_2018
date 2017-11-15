@@ -45,6 +45,12 @@ public class Enemy : MovingObject {
 	}
 
     public void AStarMoveEnemy(List<Node> nodePositionStart) {
+
+        Debug.Log("BOARD__________ " + nodePositionStart);
+        for (int j = 0; j < nodePositionStart.Count; j++) {
+            Debug.Log("Node: " + nodePositionStart[j].position + " - Heuristique: " + nodePositionStart[j].heuristique + " - Cost: " + nodePositionStart[j].cost+ " Walk: "+ nodePositionStart[j].walkable);
+        }
+
         int xDir = 0;
         int yDir = 0;
         Node directionEnemy, enemyNode = null, playerNode = null;
@@ -149,59 +155,60 @@ public class Enemy : MovingObject {
                 return cameFromList[1];
             }
 
-            for(int i=0; i < openList.Count; i++) {
+            //Calcul de la meilleure Node
+            for (int i = 0; i < openList.Count; i++) {
 
-                //Si on a un voisin avec un cout inferieur ou egal
-                if (currentNode.totalCost >= openList[i].totalCost) {
-                    currentNode = openList[i];
+                if (openList[i].walkable) {
+
+                    //Si on a un voisin avec un cout inferieur ou egal
+                    if (currentNode.totalCost >= openList[i].totalCost) {
+                        currentNode = openList[i];
+                    }
                 }
+            }
 
-                openList.Remove(currentNode);
-                closedList.Add(currentNode);
-                neighborList = GetNeighbor(nodePosition, currentNode);
+            openList.Remove(currentNode);
+            closedList.Add(currentNode);
+            neighborList = GetNeighbor(nodePosition, currentNode);
 
-                //Traitement des voisin de la node current
-                foreach (Node currentNeighbor in neighborList) {
-                    //Si on a pas deja traite cette node
-                    if (!closedList.Contains(currentNeighbor)) {
+            //Traitement des voisins de la node current
+            foreach (Node currentNeighbor in neighborList) {
+                //Si on a pas deja traite cette node
+                if (!closedList.Contains(currentNeighbor)) {
 
-                        if (!openList.Contains(currentNeighbor)) {
-                            openList.Add(currentNeighbor);
+                    if (!openList.Contains(currentNeighbor)) {
+                        openList.Add(currentNeighbor);
+                    }
+
+                    tentative_cost = currentNode.cost + DistanceBetween(currentNode, currentNeighbor);
+                    //Debug.Log(" NEW COST is " + (tentative_cost < currentNeighbor.cost) + ". tentative cost: " + tentative_cost +" neighbor cost: "+ currentNeighbor.cost);
+                    if (tentative_cost < currentNeighbor.cost) {
+
+                        //On ajoute le noeud courant au chemin (si il n'y est pas déjà)
+                        if (!cameFromList.Contains(currentNode)) {
+                            for (int j = 0; j < cameFromList.Count; j++) {
+                                if (cameFromList[j].ComparePosNode(currentNeighbor)) {
+                                    isPresent = true;
+                                }
+                            }
+                            if (!isPresent) {
+                                cameFromList.Add(currentNode);
+                            }
+
+                            isPresent = false;
+
                         }
 
-                        tentative_cost = currentNode.cost + DistanceBetween(currentNode, currentNeighbor);
-                        //Debug.Log(" NEW COST is " + (tentative_cost < currentNeighbor.cost) + ". tentative cost: " + tentative_cost +" neighbor cost: "+ currentNeighbor.cost);
-                        if (tentative_cost < currentNeighbor.totalCost) {
-                          
-                            //On ajoute le noeud courant au chemin (si il n'y est pas déjà)
-                            if (!cameFromList.Contains(currentNode)) {
-                                for (int j = 0; j < cameFromList.Count; j++) {
-                                    if (cameFromList[j].Equals(currentNeighbor)) {
-                                        isPresent = true;
-                                    }
-                                }
-                                if (!isPresent) {
-                                    cameFromList.Add(currentNode);
-                                }
-
-                                isPresent = false;
-
-                            }
-                            
-                            //Mise à jour de la grille de Node
-                            for (int j = 0; j < nodePosition.Count; j++) {
-                                if (nodePosition[j].Equals(currentNeighbor)) {
-                                    nodePosition[j].cost = tentative_cost;
-                                    nodePosition[j].heuristique = DistanceBetween(currentNeighbor, playerPosition);
-                                    //Debug.Log("MAJ NODE GRID: "+ nodePosition[j].position +" cost: "+ nodePosition[j].cost + " heuristique: "+ nodePosition[j].heuristique);
-                                }
+                        //Mise à jour de la grille de Node
+                        for (int j = 0; j < nodePosition.Count; j++) {
+                            if (nodePosition[j].Equals(currentNeighbor)) {
+                                nodePosition[j].cost = tentative_cost;
+                                nodePosition[j].heuristique = DistanceBetween(currentNeighbor, playerPosition);
+                                //Debug.Log("MAJ NODE GRID: "+ nodePosition[j].position +" cost: "+ nodePosition[j].cost + " heuristique: "+ nodePosition[j].heuristique);
                             }
                         }
                     }
-
                 }
-                
-
 
             }
 
